@@ -3,15 +3,17 @@ package com.amrabdelhamiddiab.qrcodescanner
 import android.annotation.SuppressLint
 import android.content.Context
 import android.util.Log
+import android.widget.TextView
 import android.widget.Toast
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.amrabdelhamiddiab.qrcodescanner.MainActivity.Companion.TAG
+import com.amrabdelhamiddiab.qrcodescanner.FirstFragment.Companion.TAG
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 
-class MyImageAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
+class MyImageAnalyzer(private val context: Context, private val textView: TextView) :
+    ImageAnalysis.Analyzer {
     override fun analyze(imageProxy: ImageProxy) {
         scanBarcode(imageProxy)
     }
@@ -37,9 +39,9 @@ class MyImageAnalyzer(private val context: Context) : ImageAnalysis.Analyzer {
         for (barcode in barcodes) {
             when (barcode.valueType) {
                 Barcode.TYPE_TEXT -> {
-                      Toast.makeText(context, barcode.displayValue, Toast.LENGTH_SHORT).show()
-
-                    barcode.displayValue?.let { Log.d(TAG, it) }
+                    Toast.makeText(context, barcode.displayValue, Toast.LENGTH_SHORT).show()
+                    textView.text = barcode.displayValue
+                        barcode.displayValue?.let { Log.d(TAG, it) }
                 }
             }
         }

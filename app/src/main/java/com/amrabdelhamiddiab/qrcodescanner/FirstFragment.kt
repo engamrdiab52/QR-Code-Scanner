@@ -5,6 +5,7 @@ import android.content.Intent
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
+import android.util.Size
 import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
@@ -15,11 +16,17 @@ import android.widget.Toast
 import androidx.activity.result.ActivityResultLauncher
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.appcompat.app.AlertDialog
+import androidx.camera.core.CameraSelector
+import androidx.camera.core.ImageAnalysis
+import androidx.camera.core.Preview
 import androidx.camera.lifecycle.ProcessCameraProvider
+import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
+import androidx.lifecycle.LifecycleOwner
 import com.amrabdelhamiddiab.qrcodescanner.databinding.FragmentFirstBinding
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.ExecutorService
+import java.util.concurrent.Executors
 
 class FirstFragment : Fragment() {
     private lateinit var binding: FragmentFirstBinding
@@ -49,6 +56,14 @@ class FirstFragment : Fragment() {
                 showPermissionDeniedDialog()
             }
         }
+
+        cameraExecutor = Executors.newSingleThreadExecutor()
+        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
+        cameraProviderFuture.addListener( {
+            val cameraProvider = cameraProviderFuture.get()
+            bindPreview(cameraProvider)
+        }, ContextCompat.getMainExecutor(requireContext()))
+
     }
 
     override fun onCreateView(
@@ -60,10 +75,32 @@ class FirstFragment : Fragment() {
         button = binding.button
         text = binding.textView
         button.setOnClickListener {
-            text.text = "AAAAAA"
             askForCameraPermission()
         }
+        analyzer = MyImageAnalyzer(requireContext(), binding.textView)
         return binding.root
+    }
+
+    private fun bindPreview(cameraProvider: ProcessCameraProvider) {
+        val preview: Preview = Preview.Builder()
+            .build()
+        val cameraSelector: CameraSelector = CameraSelector.Builder()
+            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
+            .build()
+        preview.setSurfaceProvider(binding.previewView.surfaceProvider)
+
+        val imageAnalysis = ImageAnalysis.Builder()
+            .setTargetResolution(Size(1280, 720))
+            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
+            .build()
+        imageAnalysis.setAnalyzer(cameraExecutor, analyzer)
+
+        cameraProvider.bindToLifecycle(
+            this as LifecycleOwner,
+            cameraSelector,
+            imageAnalysis,
+            preview
+        )
     }
 
     private fun askForCameraPermission() {

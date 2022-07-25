@@ -2,17 +2,25 @@ package com.amrabdelhamiddiab.qrcodescanner
 
 import android.annotation.SuppressLint
 import android.content.Context
-import android.util.Log
+import android.view.View
+import android.widget.LinearLayout
 import android.widget.TextView
 import android.widget.Toast
 import androidx.camera.core.ImageAnalysis
 import androidx.camera.core.ImageProxy
-import com.amrabdelhamiddiab.qrcodescanner.FirstFragment.Companion.TAG
+import androidx.camera.core.Preview
+import androidx.navigation.NavController
+import androidx.navigation.NavDirections
 import com.google.mlkit.vision.barcode.BarcodeScanning
 import com.google.mlkit.vision.barcode.common.Barcode
 import com.google.mlkit.vision.common.InputImage
 
-class MyImageAnalyzer(private val context: Context, private val textView: TextView) :
+class MyImageAnalyzer(
+    private val context: Context,
+    private val textView: TextView,
+    private val linearLayout: LinearLayout,
+    private val preview: androidx.camera.view.PreviewView
+) :
     ImageAnalysis.Analyzer {
     override fun analyze(imageProxy: ImageProxy) {
         scanBarcode(imageProxy)
@@ -39,9 +47,12 @@ class MyImageAnalyzer(private val context: Context, private val textView: TextVi
         for (barcode in barcodes) {
             when (barcode.valueType) {
                 Barcode.TYPE_TEXT -> {
-               //     Toast.makeText(context, barcode.displayValue, Toast.LENGTH_SHORT).show()
+                    Toast.makeText(context, barcode.displayValue, Toast.LENGTH_SHORT).show()
+                    //   barcode.displayValue?.let { Log.d(TAG, it) }
+                    //   navController.navigate(nav)
+                    preview.visibility = View.GONE
+                    linearLayout.visibility = View.VISIBLE
                     textView.text = barcode.displayValue
-                     //   barcode.displayValue?.let { Log.d(TAG, it) }
                 }
             }
         }

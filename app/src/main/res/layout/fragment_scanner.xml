@@ -13,14 +13,33 @@
         android:layout_height="match_parent"
         tools:context=".ScannerFragment">
 
-        <androidx.camera.view.PreviewView
-            android:id="@+id/previewView"
+        <FrameLayout
             android:layout_width="match_parent"
-            android:layout_height="0dp"
+            android:layout_height="match_parent"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent">
+
+            <LinearLayout
+                android:id="@+id/linearLayout"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <TextView
+                    android:id="@+id/textView"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:text="ksdan;navl"
+                    android:textSize="30sp" />
+            </LinearLayout>
+
+            <androidx.camera.view.PreviewView
+                android:visibility="visible"
+                android:id="@+id/previewView"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent" />
+        </FrameLayout>
 
 
     </androidx.constraintlayout.widget.ConstraintLayout>

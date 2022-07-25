@@ -17,5 +17,14 @@
     <fragment
         android:id="@+id/scannerFragment"
         android:name="com.amrabdelhamiddiab.qrcodescanner.ScannerFragment"
-        android:label="ScannerFragment" />
+        android:label="ScannerFragment" >
+        <action
+            android:id="@+id/action_scannerFragment_to_waitingFragment"
+            app:destination="@id/waitingFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/waitingFragment"
+        android:name="com.amrabdelhamiddiab.qrcodescanner.WaitingFragment"
+        android:label="WaitingFragment">
+    </fragment>
 </navigation>

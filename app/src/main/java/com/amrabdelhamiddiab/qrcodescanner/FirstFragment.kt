@@ -23,6 +23,7 @@ import androidx.camera.lifecycle.ProcessCameraProvider
 import androidx.core.content.ContextCompat
 import androidx.databinding.DataBindingUtil
 import androidx.lifecycle.LifecycleOwner
+import androidx.navigation.fragment.findNavController
 import com.amrabdelhamiddiab.qrcodescanner.databinding.FragmentFirstBinding
 import com.google.common.util.concurrent.ListenableFuture
 import java.util.concurrent.ExecutorService
@@ -32,39 +33,12 @@ class FirstFragment : Fragment() {
     private lateinit var binding: FragmentFirstBinding
     private lateinit var button: Button
     private lateinit var text: TextView
-    private lateinit var permissionLauncher: ActivityResultLauncher<String>
 
     companion object {
         const val REQUEST_CODE: Int = 1001
         const val TAG = "MainActivity"
     }
-    private lateinit var cameraProviderFuture: ListenableFuture<ProcessCameraProvider>
-    private lateinit var cameraExecutor: ExecutorService
-    private lateinit var analyzer: MyImageAnalyzer
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-        permissionLauncher = registerForActivityResult(
-            ActivityResultContracts.RequestPermission()
-        ) { isGranted ->
-            if (isGranted) {
-                // Do if the permission is granted
-                Toast.makeText(requireContext(), "permission Already granted", Toast.LENGTH_LONG)
-                    .show()
-            } else {
-                // Do otherwise
-                //   Toast.makeText(requireContext(), "permission Denied", Toast.LENGTH_LONG).show()
-                showPermissionDeniedDialog()
-            }
-        }
 
-        cameraExecutor = Executors.newSingleThreadExecutor()
-        cameraProviderFuture = ProcessCameraProvider.getInstance(requireContext())
-        cameraProviderFuture.addListener( {
-            val cameraProvider = cameraProviderFuture.get()
-            bindPreview(cameraProvider)
-        }, ContextCompat.getMainExecutor(requireContext()))
-
-    }
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
@@ -75,54 +49,11 @@ class FirstFragment : Fragment() {
         button = binding.button
         text = binding.textView
         button.setOnClickListener {
-            askForCameraPermission()
+            findNavController().navigate(R.id.action_firstFragment_to_scannerFragment)
         }
-        analyzer = MyImageAnalyzer(requireContext(), binding.textView)
+
         return binding.root
     }
 
-    private fun bindPreview(cameraProvider: ProcessCameraProvider) {
-        val preview: Preview = Preview.Builder()
-            .build()
-        val cameraSelector: CameraSelector = CameraSelector.Builder()
-            .requireLensFacing(CameraSelector.LENS_FACING_BACK)
-            .build()
-        preview.setSurfaceProvider(binding.previewView.surfaceProvider)
 
-        val imageAnalysis = ImageAnalysis.Builder()
-            .setTargetResolution(Size(1280, 720))
-            .setBackpressureStrategy(ImageAnalysis.STRATEGY_KEEP_ONLY_LATEST)
-            .build()
-        imageAnalysis.setAnalyzer(cameraExecutor, analyzer)
-
-        cameraProvider.bindToLifecycle(
-            this as LifecycleOwner,
-            cameraSelector,
-            imageAnalysis,
-            preview
-        )
-    }
-
-    private fun askForCameraPermission() {
-        permissionLauncher.launch(Manifest.permission.CAMERA)
-    }
-
-
-    private fun showPermissionDeniedDialog() {
-        AlertDialog.Builder(requireContext())
-            .setTitle("Permission Denied")
-            .setMessage("Permission is denied, Please allow permissions from App Settings.")
-            .setPositiveButton(
-                "App Settings"
-            ) { _, _ ->
-                // send to app settings if permission is denied permanently
-                val intent = Intent()
-                intent.action = Settings.ACTION_APPLICATION_DETAILS_SETTINGS
-                val uri = Uri.fromParts("package", requireActivity().packageName, null)
-                intent.data = uri
-                startActivity(intent)
-            }
-            .setNegativeButton("Cancel", null)
-            .show()
-    }
 }

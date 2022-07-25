@@ -9,5 +9,13 @@
         android:id="@+id/firstFragment"
         android:name="com.amrabdelhamiddiab.qrcodescanner.FirstFragment"
         android:label="fragment_first"
-        tools:layout="@layout/fragment_first" />
+        tools:layout="@layout/fragment_first" >
+        <action
+            android:id="@+id/action_firstFragment_to_scannerFragment"
+            app:destination="@id/scannerFragment" />
+    </fragment>
+    <fragment
+        android:id="@+id/scannerFragment"
+        android:name="com.amrabdelhamiddiab.qrcodescanner.ScannerFragment"
+        android:label="ScannerFragment" />
 </navigation>

@@ -39,9 +39,9 @@ class MyImageAnalyzer(private val context: Context, private val textView: TextVi
         for (barcode in barcodes) {
             when (barcode.valueType) {
                 Barcode.TYPE_TEXT -> {
-                    Toast.makeText(context, barcode.displayValue, Toast.LENGTH_SHORT).show()
+               //     Toast.makeText(context, barcode.displayValue, Toast.LENGTH_SHORT).show()
                     textView.text = barcode.displayValue
-                        barcode.displayValue?.let { Log.d(TAG, it) }
+                     //   barcode.displayValue?.let { Log.d(TAG, it) }
                 }
             }
         }

@@ -5,6 +5,8 @@
       <map>
         <entry key="..\:/Users/engam/AndroidStudioProjects/QRcodescanner2/app/src/main/res/layout/activity_main.xml" value="0.1" />
         <entry key="..\:/Users/engam/AndroidStudioProjects/QRcodescanner2/app/src/main/res/layout/fragment_first.xml" value="0.1" />
+        <entry key="..\:/Users/engam/AndroidStudioProjects/QRcodescanner2/app/src/main/res/layout/fragment_scanner.xml" value="0.16847826086956522" />
+        <entry key="..\:/Users/engam/AndroidStudioProjects/QRcodescanner2/app/src/main/res/layout/fragment_waiting.xml" value="0.16847826086956522" />
       </map>
     </option>
   </component>
